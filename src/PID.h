@@ -30,10 +30,8 @@ class PID
         int num_steps_whole_track_;
         std::vector<double> dp_;
         std::vector<double> gains_;
-        bool best_init_;
-        bool already_subtracted_;
-        bool already_added_;
         int what_K_;
+        int twiddle_state_;
         
         /*
         * Constructor

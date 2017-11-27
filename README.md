@@ -37,7 +37,7 @@ I used Twiddle that was presented in lessons.
 
 Initial parameters were also  taken from lessons `Kp = 0.2, Ki = 0.004, Kd = 3.0`. Using these gains the car was able to smoothly drive along the track. [Here](https://youtu.be/L2IacqcxoEg) is a demo video. However, as soon as I tried to increase speed (more than 30 mph), the car started to oscillate and go off road. From this point I used Twiddle to find stable parameters and gradually incsease speed.
 
-My final parameters are `Kp = 0.16, Ki = 0.00252, Kd = 2.1` at max speed 55 mph. Video [here](https://youtu.be/nuttYLfFrKo).
+My final parameters are `Kp = 0.168, Ki = 0.00252, Kd = 2.1` at max speed 45 mph. Video [here](https://youtu.be/nuttYLfFrKo).
 
 ## Dependencies
 

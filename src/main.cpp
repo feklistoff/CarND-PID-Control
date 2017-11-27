@@ -39,10 +39,10 @@ int main()
     PID pid;
     // Initialize the pid variable
     // pid.Init(0.2, 0.004, 3.0); // speed 30mph ! set throttle 0.3 | initial parameters that work well (were given in lessons)
-    pid.Init(0.16, 0.00252, 2.1); // speed 50 mph ! set throttle 0.5
+    pid.Init(0.168, 0.00252, 2.1); // speed 50 mph ! set throttle 0.5
 
     // set throttle according chosen pid initial parameters!!!
-    double throttle = 0.55;
+    double throttle = 0.5;
 
     h.onMessage([&pid, &throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) 
     {
@@ -61,38 +61,25 @@ int main()
                     // j[1] is the data JSON object
                     double cte = std::stod(j[1]["cte"].get<std::string>());
                     // double speed = std::stod(j[1]["speed"].get<std::string>());
-                    double angle = std::stod(j[1]["steering_angle"].get<std::string>());
+                    // double angle = std::stod(j[1]["steering_angle"].get<std::string>());
                     double steer_value;
-                
+                     
                     pid.UpdateError(cte);
                     steer_value = pid.TotalError();
-                    
+
                     // steering value is [-1, 1]
                     if (steer_value < - 1) steer_value = -1;
                     if (steer_value > 1) steer_value = 1;
 
                     pid.counter_++;
-                    
-                    // twiddle every N timesteps
-                    if (pid.counter_ % (pid.num_steps_ + pid.num_steps_whole_track_) == 0)
-                    {
-                        if (pid.twiddle_)
-                        {
-                            if (pid.dp_[0] + pid.dp_[1] + pid.dp_[2] > pid.threshold_)
-                            {
-                                pid.Twiddler();
-                                std::cout << "Kp = " << pid.Kp_ << " Ki = " << pid.Ki_ << " Kd = " << pid.Kd_ << std::endl;                          
-                            }
-                        }
-                    }
+                    pid.Twiddler();
                                         
                     json msgJson;
                     msgJson["steering_angle"] = steer_value;
-
-                    // control throttle according to how much we turn (more we turn slower we drive)
-                    if (deg2rad(angle) <= -0.4 and deg2rad(angle) >= 0.4) throttle *= (1 - abs(deg2rad(angle)));                    
+                  
+                    // control throttle according to cte (more cte -> slower we drive)
+                    msgJson["throttle"] = throttle - throttle * fabs(cte) * 0.5;
                     
-                    msgJson["throttle"] = throttle;
                     auto msg = "42[\"steer\"," + msgJson.dump() + "]";
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);                    
                 }
